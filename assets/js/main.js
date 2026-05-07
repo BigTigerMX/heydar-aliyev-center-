@@ -58,12 +58,32 @@ document.head.appendChild(loaderStyle);
 
 document.body.classList.add('no-scroll');
 
-window.addEventListener('load', async () => {
-  await loader.tick();
+// SAFETY NET — force-show everything after 5s even if something fails
+setTimeout(() => {
   loader.hide();
-  initRevealAnimations();
-  initHeroIntro();
-});
+  document.querySelectorAll('.rv, .rv-line, .split, .img-reveal').forEach(el => el.classList.add('in'));
+}, 5000);
+
+// Run on DOMContentLoaded (page parsed) instead of load (all images loaded)
+function bootApp() {
+  try {
+    loader.tick().then(() => {
+      loader.hide();
+      try { initRevealAnimations(); } catch(e) { console.warn(e); }
+      try { initHeroIntro();        } catch(e) { console.warn(e); }
+    });
+  } catch (err) {
+    console.error('boot failed', err);
+    loader.hide();
+    document.querySelectorAll('.rv, .rv-line, .split, .img-reveal').forEach(el => el.classList.add('in'));
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootApp);
+} else {
+  bootApp();
+}
 
 /* =========================================================
    2. CUSTOM CURSOR (desktop)
@@ -261,7 +281,7 @@ function initHeroIntro() {
         Math.sin(u * Math.PI) * 2.8 +
         Math.cos(v * Math.PI * .9) * .6 +
         Math.sin((u * 2.2 + v * .7) * Math.PI) * .35 +
-        Math.exp(-((u - .5) * 2.7) ** 2) * 1.4 - 1.4;
+        Math.exp(-Math.pow((u - .5) * 2.7, 2)) * 1.4 - 1.4;
       pos.push(x, y, z);
     }
   }
