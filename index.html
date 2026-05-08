@@ -3,27 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Centro Heydar Aliyev — Una obra de Zaha Hadid Architects</title>
-<meta name="description" content="Estudio editorial e interactivo del Centro Cultural Heydar Aliyev en Bakú, Azerbaiyán. Una obra cumbre de la arquitectura paramétrica diseñada por Dame Zaha Hadid, inaugurada en 2012.">
+<title>Centro Heydar Aliyev — Zaha Hadid Architects</title>
+<meta name="description" content="Estudio interactivo del Centro Heydar Aliyev, Bakú. Una obra de Dame Zaha Hadid · 2012.">
 <meta name="theme-color" content="#0F0F10">
 
-<!-- Open Graph -->
 <meta property="og:title" content="Centro Heydar Aliyev — Zaha Hadid Architects">
-<meta property="og:description" content="La obra cumbre de Zaha Hadid en Bakú, Azerbaiyán. 57.500 m² de arquitectura sin ángulos rectos.">
+<meta property="og:description" content="57.500 m² sin ángulos rectos. Bakú, Azerbaiyán.">
 <meta property="og:type" content="website">
 
-<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/css/main.css">
 
-<!-- Three.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 </head>
 <body>
+
+<!-- ═══════════════ AMBIENT BACKGROUNDS (site-wide animated layers) ═══════════════ -->
+<div class="ambient" aria-hidden="true">
+  <canvas class="ambient__dust" id="ambientDust"></canvas>
+  <svg class="ambient__curves" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="grad-gold" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0%"  stop-color="#B08D4A" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#D6B575" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#B08D4A" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="grad-caspian" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%"  stop-color="#1F3A5F" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#1F3A5F" stop-opacity=".35"/>
+        <stop offset="100%" stop-color="#1F3A5F" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path class="ambient__curve c1" d="M-100 380 C 300 200, 600 560, 900 320 S 1500 480, 1800 280" stroke="url(#grad-gold)" fill="none" stroke-width="1"/>
+    <path class="ambient__curve c2" d="M-100 540 C 350 440, 700 700, 1000 480 S 1600 600, 1800 460" stroke="url(#grad-caspian)" fill="none" stroke-width="1"/>
+    <path class="ambient__curve c3" d="M-100 720 C 280 620, 720 860, 1100 660 S 1500 760, 1800 640" stroke="url(#grad-gold)" fill="none" stroke-width=".7"/>
+  </svg>
+  <div class="ambient__grain"></div>
+</div>
 
 <!-- ═══════════════ LOADER ═══════════════ -->
 <div class="loader" id="loader">
@@ -51,20 +72,20 @@
 <nav class="nav" id="nav">
   <a href="#hero" class="nav__brand">Heydar <strong>Aliyev</strong> Center</a>
   <ul class="nav__list">
-    <li><a href="#identity">Identidad</a></li>
+    <li><a href="#identity">Ficha</a></li>
     <li><a href="#origin">Origen</a></li>
     <li><a href="#form">Forma</a></li>
     <li><a href="#viewer">Modelo 3D</a></li>
     <li><a href="#timeline">Cronología</a></li>
     <li><a href="#gallery">Galería</a></li>
-    <li><a href="#zaha">Zaha Hadid</a></li>
+    <li><a href="#zaha">Zaha</a></li>
   </ul>
   <span class="nav__locale">ES · 40°25′N</span>
   <button class="nav__toggle" aria-label="Menú">
     <span></span><span></span>
   </button>
   <div class="nav__menu">
-    <a href="#identity">Identidad</a>
+    <a href="#identity">Ficha</a>
     <a href="#origin">Origen</a>
     <a href="#form">Forma</a>
     <a href="#viewer">Modelo 3D</a>
@@ -78,8 +99,11 @@
 <!-- ═══════════════ HERO ═══════════════ -->
 <section id="hero" class="hero">
   <div class="hero__media">
-    <div class="hero__bg-img" data-parallax="-0.08"></div>
+    <div class="hero__bg-img" data-parallax="-0.08" style="background-image:url('assets/img/hero-bg.jpg');"></div>
     <canvas class="hero__canvas" id="heroCanvas"></canvas>
+    <div class="hero__beams" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
   </div>
   <div class="hero__overlay"></div>
   <div class="hero__grid"></div>
@@ -101,8 +125,8 @@
 
     <div class="hero__line">
       <p class="hero__lead rv">
-        Una obra de <em class="gold">Zaha Hadid Architects</em> en Bakú, Azerbaiyán. <br>
-        57.500 m² de superficie continua &mdash; sin ángulos rectos.
+        <em class="gold">Zaha Hadid Architects</em> · Bakú, Azerbaiyán. <br>
+        57.500 m² sin un solo ángulo recto.
       </p>
       <a href="#identity" class="hero__scroll">
         <span>Explorar</span>
@@ -116,10 +140,10 @@
 <section class="manifesto">
   <div class="container">
     <p class="manifesto__quote split rv">
-      No hay curvas estáticas en la naturaleza. Todo fluye, todo ondula. La arquitectura debe hacer lo mismo.
+      No hay curvas estáticas en la naturaleza. Todo fluye.
     </p>
     <div class="manifesto__attr rv d2">
-      Dame Zaha Hadid · Architectural Review, 2012
+      Dame Zaha Hadid · 2012
     </div>
   </div>
 </section>
@@ -130,76 +154,46 @@
     <div class="identity__grid">
       <div class="identity__head">
         <div>
-          <div class="eyebrow rv">Ficha técnica · 01</div>
+          <div class="eyebrow rv">Ficha · 01</div>
           <h2 class="identity__title rv d1">
-            La <em>identidad</em><br>de un edificio<br>singular.
+            La <em>identidad</em><br>del edificio.
           </h2>
         </div>
-        <p class="lead muted rv d2" style="max-width: 38ch;">
-          Un complejo cultural de 57.500 m² en el centro de Bakú, concebido como una superficie continua, sin pliegues, que nace del propio suelo y vuelve a él.
+        <p class="lead muted rv d2" style="max-width: 32ch;">
+          Centro cultural de 57.500 m² en Bakú. Una superficie continua que nace del suelo y vuelve a él.
         </p>
       </div>
 
       <div class="identity__rows">
         <div class="identity__row rv">
-          <div class="label">Nombre</div>
-          <div class="value">Centro Cultural <em>Heydar Aliyev</em></div>
+          <div class="label">Ubicación</div>
+          <div class="value">Av. Heydar Aliyev · Bakú</div>
           <div class="index">/01</div>
         </div>
         <div class="identity__row rv d1">
-          <div class="label">Ubicación</div>
-          <div class="value">Avenida Heydar Aliyev, Bakú</div>
+          <div class="label">Arquitecta</div>
+          <div class="value">Dame <em>Zaha Hadid</em></div>
           <div class="index">/02</div>
         </div>
         <div class="identity__row rv d1">
-          <div class="label">País</div>
-          <div class="value">República de Azerbaiyán</div>
+          <div class="label">Estudio</div>
+          <div class="value">Zaha Hadid Architects</div>
           <div class="index">/03</div>
         </div>
         <div class="identity__row rv d2">
-          <div class="label">Coordenadas</div>
-          <div class="value">40°25′26″N · 49°51′21″E</div>
+          <div class="label">Concurso</div>
+          <div class="value">Internacional · <em>2007</em></div>
           <div class="index">/04</div>
         </div>
         <div class="identity__row rv d2">
-          <div class="label">Arquitecta</div>
-          <div class="value">Dame <em>Zaha Hadid</em></div>
+          <div class="label">Inauguración</div>
+          <div class="value">10 de mayo de <em>2012</em></div>
           <div class="index">/05</div>
         </div>
         <div class="identity__row rv d3">
-          <div class="label">Estudio</div>
-          <div class="value">Zaha Hadid Architects (ZHA)</div>
-          <div class="index">/06</div>
-        </div>
-        <div class="identity__row rv d3">
-          <div class="label">Diseño Asociado</div>
-          <div class="value">Patrik Schumacher · Saffet Kaya Bekiroglu</div>
-          <div class="index">/07</div>
-        </div>
-        <div class="identity__row rv d4">
-          <div class="label">Constructora</div>
-          <div class="value">DIA Holding · Arabtec Construction</div>
-          <div class="index">/08</div>
-        </div>
-        <div class="identity__row rv d4">
-          <div class="label">Concurso</div>
-          <div class="value">Internacional · ganado en <em>2007</em></div>
-          <div class="index">/09</div>
-        </div>
-        <div class="identity__row rv d5">
-          <div class="label">Inauguración</div>
-          <div class="value">10 de mayo de <em>2012</em></div>
-          <div class="index">/10</div>
-        </div>
-        <div class="identity__row rv d5">
           <div class="label">Tipología</div>
-          <div class="value">Cultural · Auditorio · Museo · Conferencias</div>
-          <div class="index">/11</div>
-        </div>
-        <div class="identity__row rv d5">
-          <div class="label">Coste estimado</div>
-          <div class="value">≈ 250 millones USD</div>
-          <div class="index">/12</div>
+          <div class="value">Auditorio · Museo · Conferencias</div>
+          <div class="index">/06</div>
         </div>
       </div>
     </div>
@@ -212,20 +206,14 @@
     <div class="eyebrow rv" style="margin-bottom: 3rem;">Origen · 02</div>
     <div class="origin__grid">
       <h2 class="origin__title rv">
-        El edificio<br>que rompió<br>con el <em>pasado</em><br>soviético.
+        Un edificio que<br>cerró la era<br><em>soviética</em>.
       </h2>
       <div class="origin__body">
         <p class="rv">
-          Cuando en 2003 falleció Heydar Aliyev &mdash;tercer Presidente de Azerbaiyán y figura fundacional del país independiente moderno&mdash; el gobierno azerbaiyano decidió construir un centro cultural de talla mundial en su honor. La capital, Bakú, vivía un boom económico impulsado por el petróleo y el gas del Caspio, y aspiraba a transformar su imagen ante el mundo. Necesitaba un símbolo arquitectónico que cerrara la era soviética y abriera una nueva narrativa.
+          En 2003, tras la muerte del tercer Presidente azerbaiyano, el gobierno convoca un concurso internacional para erigir un símbolo cultural en su honor. En 2007, <strong>Zaha Hadid Architects</strong> gana con una propuesta sin ángulos rectos: una superficie continua que emerge del suelo, se pliega en el aire y vuelve a la tierra.
         </p>
         <p class="rv d1">
-          En 2007 se convocó un concurso internacional. Entre los estudios participantes, <strong>Zaha Hadid Architects</strong> presentó una propuesta radical: un edificio sin ángulos rectos, sin esquinas duras, sin la rigidez monumental que el régimen anterior había impuesto. Una superficie continua que parecía emerger del suelo, plegarse en el aire y descender de nuevo a la tierra. La propuesta fue elegida por unanimidad.
-        </p>
-        <p class="rv d2">
-          La construcción se inició en 2008. Más de <strong>7.500 paneles únicos</strong> de hormigón reforzado con fibra de vidrio (GRC) y poliéster reforzado con fibra de vidrio (GFRP) fueron diseñados, fabricados y colocados pieza por pieza. Ninguno se repite. El edificio fue inaugurado el <strong>10 de mayo de 2012</strong> &mdash;el día del cumpleaños de Aliyev&mdash; ante el Presidente Ilham Aliyev y miles de invitados.
-        </p>
-        <p class="rv d3">
-          Dos años más tarde, en 2014, el Design Museum de Londres lo nombró <em>"Diseño del Año"</em> &mdash;la primera vez que el premio recaía en una arquitecta. La obra se convirtió en el símbolo del nuevo Azerbaiyán y en una de las construcciones más fotografiadas del siglo XXI.
+          La construcción comienza en 2008. Más de <strong>7.500 paneles únicos</strong> de hormigón y poliéster reforzados con fibra de vidrio se fabrican uno a uno —ninguno se repite— y se inaugura el <strong>10 de mayo de 2012</strong>. En 2014, el Design Museum de Londres lo nombra <em>"Diseño del Año"</em>: la primera vez que el premio recae en una arquitecta.
         </p>
       </div>
     </div>
@@ -239,45 +227,36 @@
 
     <div class="form-section__row">
       <div class="form-section__visual img-reveal" data-num="01 · Topografía">
-        <img src="assets/img/exterior-1.jpg" alt="Vista exterior frontal del Centro Heydar Aliyev">
+        <img src="assets/img/form-01.jpg" alt="Vista exterior del Centro Heydar Aliyev">
       </div>
       <div class="form-section__copy">
-        <h3 class="rv">El edificio como <em>topografía continua</em>.</h3>
+        <h3 class="rv">El edificio <em>es</em> el suelo.</h3>
         <p class="rv d1">
-          La estrategia formal del proyecto comienza con una idea simple pero radical: el edificio no se posa sobre el terreno, sino que <strong>es</strong> el terreno. La plaza pública asciende de manera fluida, se pliega, se eleva como una ola y desciende otra vez. Suelo y muro y techo dejan de ser categorías separadas: son una sola superficie.
-        </p>
-        <p class="rv d2 muted">
-          Hadid llamó a esta operación <em>"liquefacción del suelo"</em>: la disolución de los límites entre lo público exterior y lo institucional interior.
+          La plaza pública asciende, se pliega como una ola y vuelve a descender. Suelo, muro y techo dejan de ser categorías separadas: son una sola superficie.
         </p>
       </div>
     </div>
 
     <div class="form-section__row reverse">
       <div class="form-section__visual img-reveal" data-num="02 · Continuidad">
-        <img src="assets/img/exterior-3.jpg" alt="Detalle de la curva continua del Centro Heydar Aliyev">
+        <img src="assets/img/form-02.jpg" alt="Detalle de la curva del Centro Heydar Aliyev">
       </div>
       <div class="form-section__copy">
-        <h3 class="rv">Sin ángulos. Sin <em>esquinas</em>. Sin pausa.</h3>
+        <h3 class="rv">Sin ángulos. Sin <em>esquinas</em>.</h3>
         <p class="rv d1">
-          No existe un solo ángulo de 90° en el envolvente exterior. Cada panel curva ligeramente hacia el siguiente, formando una cubierta blanca que parece imposible. Vista de día, la fachada captura la luz del Caspio y la devuelve cambiada. De noche, una iluminación interior la convierte en una linterna.
-        </p>
-        <p class="rv d2 muted">
-          La estructura subyacente es un esqueleto de acero diseñado mediante software paramétrico avanzado, capaz de calcular en tiempo real la geometría de cada nodo y cada panel.
+          No existe un solo ángulo de 90° en la fachada. Cada panel curva ligeramente hacia el siguiente. Una piel blanca que de día captura la luz y de noche se ilumina desde dentro.
         </p>
       </div>
     </div>
 
     <div class="form-section__row">
       <div class="form-section__visual img-reveal" data-num="03 · Plaza">
-        <img src="assets/img/gardens.jpg" alt="Centro Heydar Aliyev y sus jardines de aproximación">
+        <img src="assets/img/form-03.jpg" alt="Centro Heydar Aliyev y sus jardines">
       </div>
       <div class="form-section__copy">
-        <h3 class="rv">Una plaza que se <em>convierte</em> en arquitectura.</h3>
+        <h3 class="rv">Plaza que se vuelve <em>arquitectura</em>.</h3>
         <p class="rv d1">
-          El edificio se aproxima por una explanada de 13,58 hectáreas, con jardines, fuentes y senderos peatonales. La transición entre exterior e interior es deliberadamente borrosa: el visitante camina por la plaza y, sin advertirlo, ya está dentro del centro.
-        </p>
-        <p class="rv d2 muted">
-          Esta operación —arquitectura como paisaje continuo— es uno de los temas centrales del lenguaje de Zaha Hadid Architects, presente también en obras como el MAXXI de Roma o la Estación de Bombera de Vitra.
+          13,58 hectáreas de jardines y senderos. La transición entre exterior e interior es deliberadamente borrosa: el visitante camina por la plaza y, sin advertirlo, ya está dentro.
         </p>
       </div>
     </div>
@@ -290,23 +269,23 @@
     <div class="stats__grid">
       <div class="stat rv">
         <div class="stat__num"><span data-count="57500">0</span><small>m²</small></div>
-        <div class="stat__lbl">Superficie construida</div>
-        <div class="stat__sub">Auditorio, museo, conferencias y exposiciones</div>
+        <div class="stat__lbl">Superficie</div>
+        <div class="stat__sub">Auditorio, museo, conferencias</div>
       </div>
       <div class="stat rv d1">
         <div class="stat__num"><span data-count="74">0</span><small>m</small></div>
-        <div class="stat__lbl">Altura máxima</div>
-        <div class="stat__sub">Equivalente a un edificio de 24 pisos</div>
+        <div class="stat__lbl">Altura</div>
+        <div class="stat__sub">Equivalente a 24 pisos</div>
       </div>
       <div class="stat rv d2">
         <div class="stat__num"><span data-count="7500">0</span><small>+</small></div>
         <div class="stat__lbl">Paneles únicos</div>
-        <div class="stat__sub">GRC y GFRP fabricados a medida, ninguno se repite</div>
+        <div class="stat__sub">Ninguno se repite</div>
       </div>
       <div class="stat rv d3">
         <div class="stat__num"><span data-count="13.58" data-decimals="2">0</span><small>ha</small></div>
-        <div class="stat__lbl">Superficie del sitio</div>
-        <div class="stat__sub">Plaza, jardines y aparcamientos subterráneos</div>
+        <div class="stat__lbl">Sitio</div>
+        <div class="stat__sub">Plaza y jardines</div>
       </div>
     </div>
   </div>
@@ -315,13 +294,13 @@
 <!-- ═══════════════ 3D INTERACTIVE VIEWER ═══════════════ -->
 <section id="viewer" class="viewer">
   <div class="container container--wide">
-    <div class="eyebrow rv" style="margin-bottom: 2rem;">Modelo 3D Interactivo · 04</div>
+    <div class="eyebrow rv" style="margin-bottom: 2rem;">Modelo 3D · 04</div>
     <div class="viewer__head">
       <h2 class="rv">
-        Toca, arrastra, <em>recorre</em><br>la geometría.
+        El mismo modelo<br>de la <em>maqueta</em>.
       </h2>
       <p class="viewer__intro rv d1 muted">
-        Una representación paramétrica simplificada del edificio. Arrastra para rotar, usa la rueda del ratón para acercar. En móvil, desliza con un dedo.
+        Modelo a escala 1:1000, idéntico al impreso para la maqueta física. Arrastra para rotar, rueda del ratón para acercar.
       </p>
     </div>
 
@@ -332,10 +311,14 @@
         <div class="corner tr"></div>
         <div class="corner bl"></div>
         <div class="corner br"></div>
-        <div class="label-tl">Mesh · Parametric Surface</div>
-        <div class="label-tr">v.1.0</div>
-        <div class="label-bl">XYZ · 12.4k vertices</div>
-        <div class="label-br">Rendered with WebGL</div>
+        <div class="label-tl" id="viewerLabelStatus">Mesh · loading</div>
+        <div class="label-tr">v.2.0</div>
+        <div class="label-bl">Escala 1 : 1000</div>
+        <div class="label-br">WebGL · STL</div>
+      </div>
+      <div class="viewer__loading" id="viewerLoading">
+        <div class="viewer__loading-bar"></div>
+        <span>Cargando modelo · STL</span>
       </div>
     </div>
 
@@ -353,11 +336,8 @@
     <div class="eyebrow rv" style="margin-bottom: 2rem; color: var(--gold-light); opacity:1;">Cronología · 05</div>
     <div class="timeline__head">
       <h2 class="rv">
-        De la <em>idea</em> al edificio<br>en cinco años.
+        De la <em>idea</em><br>al edificio<br>en cinco años.
       </h2>
-      <p class="muted rv d1" style="max-width: 45ch; opacity:.6;">
-        Cinco años entre la primera línea trazada en Londres y el corte de cinta en Bakú. Un cronograma vertiginoso para una obra de esta complejidad.
-      </p>
     </div>
 
     <div class="timeline__list">
@@ -365,12 +345,11 @@
         <div class="tl-item__year">2003</div>
         <div class="tl-item__body">
           <div>
-            <h3>El origen del proyecto</h3>
-            <p>Tras el fallecimiento de Heydar Aliyev, tercer Presidente de Azerbaiyán, el gobierno decide construir un centro cultural de talla mundial dedicado a su legado. Se reserva un terreno de 13,58 hectáreas en el corazón del distrito Narimanov de Bakú.</p>
+            <h3>Origen del proyecto</h3>
+            <p>Tras la muerte de Heydar Aliyev, el gobierno reserva 13,58 ha en el distrito Narimanov de Bakú.</p>
           </div>
           <div class="tl-item__meta">
-            <div><span>Ubicación</span>Distrito Narimanov · Bakú</div>
-            <div><span>Decisión</span>Gobierno de Azerbaiyán</div>
+            <div><span>Sitio</span>Narimanov · Bakú</div>
           </div>
         </div>
       </div>
@@ -380,11 +359,10 @@
         <div class="tl-item__body">
           <div>
             <h3>Concurso internacional</h3>
-            <p>Se convoca un concurso de arquitectura. Entre los estudios participantes, Zaha Hadid Architects presenta una propuesta radical: una superficie continua sin ángulos rectos, una topografía construida. La propuesta es seleccionada por unanimidad por el jurado.</p>
+            <p>Zaha Hadid Architects gana por unanimidad con una superficie continua sin ángulos rectos.</p>
           </div>
           <div class="tl-item__meta">
-            <div><span>Tipo</span>Concurso internacional</div>
-            <div><span>Propuesta ganadora</span>Zaha Hadid Architects</div>
+            <div><span>Ganador</span>Zaha Hadid Architects</div>
           </div>
         </div>
       </div>
@@ -393,11 +371,10 @@
         <div class="tl-item__year">2008</div>
         <div class="tl-item__body">
           <div>
-            <h3>Inicio de la construcción</h3>
-            <p>Comienzan las excavaciones y los trabajos de cimentación. La empresa turca DIA Holding y la emiratí Arabtec Construction asumen la ejecución. Los ingenieros enfrentan el desafío de materializar geometrías generadas por software paramétrico en estructuras físicas reales.</p>
+            <h3>Construcción</h3>
+            <p>DIA Holding y Arabtec materializan geometrías paramétricas en estructura física real.</p>
           </div>
           <div class="tl-item__meta">
-            <div><span>Constructoras</span>DIA Holding · Arabtec</div>
             <div><span>Estructura</span>Acero + GRC + GFRP</div>
           </div>
         </div>
@@ -408,11 +385,10 @@
         <div class="tl-item__body">
           <div>
             <h3>La piel del edificio</h3>
-            <p>Más de 7.500 paneles únicos de Glass-Reinforced Concrete (GRC) y Glass-Fibre Reinforced Polyester (GFRP) son fabricados por empresas especializadas europeas. Cada panel es diferente: distinta forma, dimensión y curvatura. Ninguno se repite en todo el envolvente.</p>
+            <p>Más de 7.500 paneles únicos, fabricados pieza por pieza. Ninguno se repite.</p>
           </div>
           <div class="tl-item__meta">
             <div><span>Paneles</span>7.500+ únicos</div>
-            <div><span>Software</span>BIM paramétrico</div>
           </div>
         </div>
       </div>
@@ -422,10 +398,9 @@
         <div class="tl-item__body">
           <div>
             <h3>Inauguración · 10 de mayo</h3>
-            <p>El Presidente Ilham Aliyev preside la ceremonia inaugural en presencia de Zaha Hadid. La fecha se elige deliberadamente: es el día del cumpleaños de Heydar Aliyev. El centro recibe a más de un millón de visitantes en su primer año de operación.</p>
+            <p>Más de un millón de visitantes en el primer año. Fecha elegida: cumpleaños de Heydar Aliyev.</p>
           </div>
           <div class="tl-item__meta">
-            <div><span>Fecha</span>10 · 05 · 2012</div>
             <div><span>Año uno</span>1.000.000+ visitas</div>
           </div>
         </div>
@@ -436,83 +411,13 @@
         <div class="tl-item__body">
           <div>
             <h3>Diseño del Año</h3>
-            <p>El Design Museum de Londres otorga al Centro Heydar Aliyev el premio <em>"Design of the Year"</em>, el reconocimiento internacional más prestigioso del diseño contemporáneo. Es la primera vez en la historia del galardón que es entregado a una arquitecta. Zaha Hadid se consolida como referente global.</p>
+            <p>El Design Museum de Londres lo premia. Primera vez que el galardón recae en una arquitecta.</p>
           </div>
           <div class="tl-item__meta">
             <div><span>Premio</span>Design of the Year</div>
-            <div><span>Otorgado por</span>Design Museum · Londres</div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ MATERIALS / ENGINEERING ═══════════════ -->
-<section id="materials" class="materials">
-  <div class="container">
-    <div class="materials__head">
-      <div class="eyebrow rv" style="margin-bottom: 2rem;">Materiales &amp; ingeniería · 06</div>
-      <h2 class="rv">Cómo se <em>construyó</em> lo imposible.</h2>
-      <p class="rv d1">
-        Tres ingredientes hicieron posible la geometría del Centro Heydar Aliyev: una estructura espacial de acero diseñada nodo a nodo, una piel de paneles compuestos fabricados a medida, y un flujo de trabajo paramétrico que permitió coordinar miles de piezas únicas en obra.
-      </p>
-    </div>
-
-    <div class="materials__grid">
-      <article class="matr rv">
-        <div class="matr__num">/01</div>
-        <h3 class="matr__title">Estructura espacial de <em>acero</em></h3>
-        <p class="matr__desc">
-          El esqueleto del edificio es un sistema espacial de acero soldado, calculado mediante software de elementos finitos. La estructura asume todas las cargas del envolvente curvo y permite los voladizos extremos sin pilares intermedios visibles.
-        </p>
-        <div class="matr__data">≈ 12.000 t · acero estructural</div>
-      </article>
-
-      <article class="matr rv d1">
-        <div class="matr__num">/02</div>
-        <h3 class="matr__title">Paneles <em>GRC</em> &amp; <em>GFRP</em></h3>
-        <p class="matr__desc">
-          La piel exterior está formada por más de 7.500 paneles únicos. Los más pesados son de Glass-Reinforced Concrete (GRC); los de doble curvatura más extrema, de Glass-Fibre Reinforced Polyester (GFRP). Cada uno fue moldeado individualmente.
-        </p>
-        <div class="matr__data">7.500+ paneles · ninguno repetido</div>
-      </article>
-
-      <article class="matr rv d2">
-        <div class="matr__num">/03</div>
-        <h3 class="matr__title">Diseño <em>paramétrico</em></h3>
-        <p class="matr__desc">
-          La geometría completa fue desarrollada y coordinada en software paramétrico (Rhino, Grasshopper, BIM). Cada panel, cada nodo de la estructura y cada junta de dilatación se calcularon individualmente y se exportaron directamente a fabricación CNC.
-        </p>
-        <div class="matr__data">Rhino · Grasshopper · BIM</div>
-      </article>
-
-      <article class="matr rv d3">
-        <div class="matr__num">/04</div>
-        <h3 class="matr__title">Fachada <em>autoportante</em></h3>
-        <p class="matr__desc">
-          Los paneles no son simplemente un revestimiento: contribuyen a la rigidez del envolvente. Se anclan a la estructura con conexiones flexibles que permiten dilatación térmica y soportan los movimientos del edificio.
-        </p>
-        <div class="matr__data">Sistema de anclaje secundario</div>
-      </article>
-
-      <article class="matr rv d4">
-        <div class="matr__num">/05</div>
-        <h3 class="matr__title">Iluminación <em>integrada</em></h3>
-        <p class="matr__desc">
-          Una matriz de luminarias LED programables baña la fachada de noche, transformando el edificio en una pieza de arte luminoso. Cada panel actúa como reflector difuso, creando un efecto de superficie incandescente.
-        </p>
-        <div class="matr__data">LED RGB · control DMX</div>
-      </article>
-
-      <article class="matr rv d5">
-        <div class="matr__num">/06</div>
-        <h3 class="matr__title">Sostenibilidad <em>térmica</em></h3>
-        <p class="matr__desc">
-          El sistema de doble piel proporciona aislamiento térmico crítico para el clima extremo de Bakú, donde el verano supera 40 °C y el invierno baja de 0 °C. Los paneles blancos reflejan más del 80 % de la radiación solar incidente.
-        </p>
-        <div class="matr__data">Albedo &gt; 0,80</div>
-      </article>
     </div>
   </div>
 </section>
@@ -521,51 +426,37 @@
 <section id="inside" class="inside">
   <div class="container container--wide">
     <div class="inside__head">
-      <div class="eyebrow rv" style="margin-bottom: 2rem;">Espacios interiores · 07</div>
-      <h2 class="rv">Lo que vive <em>dentro</em> del edificio.</h2>
+      <div class="eyebrow rv" style="margin-bottom: 2rem;">Espacios · 06</div>
+      <h2 class="rv">Lo que vive <em>dentro</em>.</h2>
     </div>
 
     <div class="inside__grid">
-      <a class="room r1" data-lightbox data-cap="Vestíbulo principal · superficie continua">
-        <img src="assets/img/indoor-wide.jpg" alt="Vestíbulo principal del Centro Heydar Aliyev">
+      <a class="room r1" data-lightbox data-cap="Auditorio principal">
+        <img src="assets/img/inside-01.jpg" alt="Auditorio del Centro Heydar Aliyev">
         <div class="room__caption">
-          <h4>Auditorio Principal</h4>
-          <span>Capacidad 1.000</span>
+          <h4>Auditorio</h4>
+          <span>1.000 plazas</span>
         </div>
       </a>
-      <a class="room r2" data-lightbox data-cap="Corredor curvo">
-        <img src="assets/img/interior-1.jpg" alt="Corredor curvo interior">
+      <a class="room r2" data-lightbox data-cap="Galerías del museo">
+        <img src="assets/img/inside-02.jpg" alt="Galería interior">
         <div class="room__caption">
-          <h4>Galerías del Museo</h4>
-          <span>3 plantas · 2.500 m²</span>
+          <h4>Galerías</h4>
+          <span>3 plantas</span>
         </div>
       </a>
-      <a class="room r3" data-lightbox data-cap="Detalle interior">
-        <img src="assets/img/interior-3.jpg" alt="Detalle interior con escaleras">
+      <a class="room r3" data-lightbox data-cap="Espacio multiuso">
+        <img src="assets/img/inside-03.jpg" alt="Espacio interior multiuso">
         <div class="room__caption">
-          <h4>Sala de Conferencias</h4>
-          <span>500 plazas</span>
+          <h4>Multiuso</h4>
+          <span>Eventos</span>
         </div>
       </a>
-      <a class="room r4" data-lightbox data-cap="Espacio de exposición">
-        <img src="assets/img/interior-2.jpg" alt="Espacio de exposición temporal">
+      <a class="room r4" data-lightbox data-cap="Plaza pública">
+        <img src="assets/img/inside-04.jpg" alt="Plaza del Centro Heydar Aliyev en su contexto">
         <div class="room__caption">
-          <h4>Exposiciones</h4>
-          <span>Temporales · permanentes</span>
-        </div>
-      </a>
-      <a class="room r5" data-lightbox data-cap="Vestíbulo">
-        <img src="assets/img/yoga.jpg" alt="Espacio multiuso del centro">
-        <div class="room__caption">
-          <h4>Espacio Multiuso</h4>
-          <span>Eventos · talleres</span>
-        </div>
-      </a>
-      <a class="room r6" data-lightbox data-cap="Vista general en contexto urbano">
-        <img src="assets/img/context.jpg" alt="Centro Heydar Aliyev en su contexto urbano">
-        <div class="room__caption">
-          <h4>Plaza · Jardines</h4>
-          <span>13,58 ha · acceso público</span>
+          <h4>Plaza</h4>
+          <span>13,58 ha</span>
         </div>
       </a>
     </div>
@@ -577,56 +468,28 @@
   <div class="container container--wide">
     <div class="gallery__head">
       <div>
-        <div class="eyebrow rv" style="margin-bottom: 2rem;">Galería · 08</div>
-        <h2 class="rv"><em>Once</em> imágenes del edificio.</h2>
+        <div class="eyebrow rv" style="margin-bottom: 2rem;">Galería · 07</div>
+        <h2 class="rv"><em>Cuatro</em> miradas.</h2>
       </div>
-      <span class="gallery__count rv d1">011 / 011 · clic para ampliar</span>
+      <span class="gallery__count rv d1">004 / 004 · clic para ampliar</span>
     </div>
 
     <div class="gallery__masonry">
-      <a class="gallery__item img-reveal rv" data-lightbox data-cap="Vista frontal — Heydar Aliyev Center">
-        <img src="assets/img/hero-main.jpg" alt="Vista frontal del Centro Heydar Aliyev">
-        <div class="gallery__item__cap">/01 · Vista frontal</div>
+      <a class="gallery__item img-reveal rv" data-lightbox data-cap="Vista aérea">
+        <img src="assets/img/gallery-01.jpg" alt="Vista aérea del Centro Heydar Aliyev">
+        <div class="gallery__item__cap">/01 · Vista aérea</div>
       </a>
-      <a class="gallery__item img-reveal rv d1" data-lightbox data-cap="Detalle de la fachada curva">
-        <img src="assets/img/exterior-1.jpg" alt="Vista exterior 1">
-        <div class="gallery__item__cap">/02 · Fachada principal</div>
+      <a class="gallery__item img-reveal rv d1" data-lightbox data-cap="Detalle de fachada">
+        <img src="assets/img/gallery-02.jpg" alt="Detalle del envolvente exterior">
+        <div class="gallery__item__cap">/02 · Detalle</div>
       </a>
-      <a class="gallery__item img-reveal rv d2" data-lightbox data-cap="Edificio en su contexto urbano">
-        <img src="assets/img/context.jpg" alt="Vista contextual">
-        <div class="gallery__item__cap">/03 · En contexto</div>
+      <a class="gallery__item img-reveal rv d2" data-lightbox data-cap="Otra perspectiva">
+        <img src="assets/img/gallery-03.jpg" alt="Vista lateral del edificio">
+        <div class="gallery__item__cap">/03 · Otra luz</div>
       </a>
-      <a class="gallery__item img-reveal rv" data-lightbox data-cap="Vista lateral">
-        <img src="assets/img/exterior-2.jpg" alt="Vista lateral">
-        <div class="gallery__item__cap">/04 · Vista lateral</div>
-      </a>
-      <a class="gallery__item img-reveal rv d1" data-lightbox data-cap="Interior — escalera y corredor">
-        <img src="assets/img/interior-1.jpg" alt="Interior corredor">
-        <div class="gallery__item__cap">/05 · Interior · escalera</div>
-      </a>
-      <a class="gallery__item img-reveal rv d2" data-lightbox data-cap="Plaza y jardines">
-        <img src="assets/img/gardens.jpg" alt="Vista de jardines y plaza">
-        <div class="gallery__item__cap">/06 · Plaza · jardines</div>
-      </a>
-      <a class="gallery__item img-reveal rv" data-lightbox data-cap="Vista trasera">
-        <img src="assets/img/exterior-3.jpg" alt="Vista trasera">
-        <div class="gallery__item__cap">/07 · Vista trasera</div>
-      </a>
-      <a class="gallery__item img-reveal rv d1" data-lightbox data-cap="Interior · vista hacia la cubierta">
-        <img src="assets/img/interior-2.jpg" alt="Interior 2">
-        <div class="gallery__item__cap">/08 · Interior · cubierta</div>
-      </a>
-      <a class="gallery__item img-reveal rv d2" data-lightbox data-cap="Espacio interior multiusos">
-        <img src="assets/img/indoor-wide.jpg" alt="Vestíbulo principal">
-        <div class="gallery__item__cap">/09 · Vestíbulo</div>
-      </a>
-      <a class="gallery__item img-reveal rv" data-lightbox data-cap="Detalle interior">
-        <img src="assets/img/interior-3.jpg" alt="Interior 3">
-        <div class="gallery__item__cap">/10 · Detalle interior</div>
-      </a>
-      <a class="gallery__item img-reveal rv d1" data-lightbox data-cap="Día del yoga · escala humana">
-        <img src="assets/img/yoga.jpg" alt="Día del yoga · escala humana">
-        <div class="gallery__item__cap">/11 · Escala humana</div>
+      <a class="gallery__item img-reveal rv" data-lightbox data-cap="Panorámica de Bakú">
+        <img src="assets/img/gallery-04.jpg" alt="Panorámica con el Centro en su entorno urbano">
+        <div class="gallery__item__cap">/04 · Panorámica</div>
       </a>
     </div>
   </div>
@@ -635,11 +498,11 @@
 <!-- ═══════════════ ZAHA HADID ═══════════════ -->
 <section id="zaha" class="zaha">
   <div class="container">
-    <div class="eyebrow rv" style="margin-bottom: 3rem;">Su Creadora · 09</div>
+    <div class="eyebrow rv" style="margin-bottom: 3rem;">Su Creadora · 08</div>
 
     <div class="zaha__hero">
       <div class="zaha__portrait img-reveal rv">
-        <img src="assets/img/zaha-portrait.jpg" alt="Retrato de Dame Zaha Hadid en el Centro Heydar Aliyev, noviembre de 2013">
+        <img src="assets/img/zaha-portrait.jpg" alt="Retrato de Dame Zaha Hadid en el Centro Heydar Aliyev">
       </div>
       <div class="zaha__titlewrap">
         <h2 class="zaha__name rv">Dame Zaha<br><em>Hadid</em></h2>
@@ -652,47 +515,30 @@
         <dl>
           <dt>Nacimiento</dt>
           <dd>Bagdad · Irak · 1950</dd>
-          <dt>Fallecimiento</dt>
-          <dd>Miami · EE. UU. · 2016</dd>
           <dt>Estudios</dt>
-          <dd>Matemáticas · Univ. Americana de Beirut</dd>
+          <dd>Matemáticas · Beirut</dd>
           <dd>Architectural Association · Londres</dd>
           <dt>Estudio</dt>
-          <dd>Zaha Hadid Architects · Londres · 1980</dd>
-          <dt>Equipo actual</dt>
-          <dd>≈ 400 personas · 60 países</dd>
-          <dt>Obras construidas</dt>
+          <dd>Zaha Hadid Architects · 1980</dd>
+          <dt>Obras</dt>
           <dd>+44 edificios · +900 proyectos</dd>
         </dl>
       </aside>
 
       <main>
         <p class="rv">
-          <strong>Dame Zaha Mohammad Hadid</strong> nació en Bagdad el 31 de octubre de 1950, en el seno de una familia iraquí cosmopolita y progresista. Su padre, Muhammad Hadid, fue un destacado político y empresario, fundador del Partido Democrático Nacional. Esta atmósfera intelectual marcaría su vida.
+          Iraquí, formada en <strong>matemáticas</strong> antes que en arquitectura, Hadid fundó su estudio en Londres en 1980. Sus primeros quince años se calificaron de <em>"imposibles de construir"</em>: el software paramétrico tardaría en alcanzarla.
         </p>
         <p class="rv">
-          Estudió primero <strong>matemáticas</strong> en la Universidad Americana de Beirut &mdash;disciplina que dotaría su arquitectura posterior de una precisión geométrica extraordinaria&mdash; y se trasladó después a Londres en 1972 para estudiar arquitectura en la <strong>Architectural Association School of Architecture</strong>. Allí fue alumna del legendario Rem Koolhaas, quien la describió como <em>"un planeta orbitando en su propia órbita"</em>.
-        </p>
-        <p class="rv">
-          En 1980 fundó su propio estudio en Londres, <strong>Zaha Hadid Architects</strong>. Durante los primeros quince años de su carrera, sus proyectos fueron tachados de <em>"imposibles de construir"</em>: torcían las leyes de la perspectiva, abolían los ángulos rectos, desafiaban la gravedad. Solo con el avance del software de modelado paramétrico y los nuevos materiales de construcción, sus visiones comenzarían a materializarse.
-        </p>
-        <p class="rv">
-          En 2004 se convirtió en la <strong>primera mujer en la historia</strong> en recibir el <strong>Premio Pritzker</strong>, el máximo galardón de la arquitectura mundial. Le seguirían el Premio Stirling del RIBA (en tres ocasiones), la condición de Dame Commander del Imperio Británico, y el Design of the Year por el Centro Heydar Aliyev.
-        </p>
-        <p class="rv">
-          Hadid murió de un infarto en Miami el 31 de marzo de 2016, a los 65 años, durante el tratamiento de una bronquitis. Dejó tras de sí 44 edificios construidos, más de 900 proyectos, y un lenguaje arquitectónico llamado <em>parametrismo</em> que continúa siendo desarrollado por su estudio bajo la dirección de Patrik Schumacher.
+          En <strong>2004</strong>, primera mujer en recibir el <strong>Pritzker</strong> —máximo galardón de la arquitectura mundial—. Murió en Miami en 2016, a los 65 años, tras dejar 44 edificios construidos y un lenguaje propio: el <em>parametrismo</em>.
         </p>
 
         <div class="zaha__awards">
           <h3>Reconocimientos clave</h3>
           <ul class="zaha__awards-list">
-            <li><time>2004</time><span class="name">Premio Pritzker · primera mujer en la historia</span></li>
-            <li><time>2010</time><span class="name">Premio Stirling · MAXXI · Roma</span></li>
-            <li><time>2011</time><span class="name">Premio Stirling · Evelyn Grace Academy · Londres</span></li>
-            <li><time>2012</time><span class="name">Dame Commander del Imperio Británico (DBE)</span></li>
-            <li><time>2013</time><span class="name">Premio Stirling · Aquatics Centre · Londres</span></li>
-            <li><time>2014</time><span class="name">Design of the Year · Centro Heydar Aliyev</span></li>
-            <li><time>2014</time><span class="name">Premio Mies van der Rohe · UE</span></li>
+            <li><time>2004</time><span class="name">Premio Pritzker · primera mujer</span></li>
+            <li><time>2012</time><span class="name">Dame Commander del Imperio Británico</span></li>
+            <li><time>2014</time><span class="name">Design of the Year · Heydar Aliyev</span></li>
             <li><time>2016</time><span class="name">Royal Gold Medal · RIBA</span></li>
           </ul>
         </div>
@@ -701,73 +547,15 @@
   </div>
 </section>
 
-<!-- ═══════════════ PRESS / RECOGNITION ═══════════════ -->
-<section id="press" class="press">
-  <div class="container container--wide">
-    <div class="eyebrow rv" style="margin-bottom: 2rem; color: var(--gold-light); opacity:1;">Reconocimientos · 10</div>
-    <div class="press__head">
-      <h2 class="rv">El edificio en la <em>prensa</em>.</h2>
-      <p class="rv d1 muted" style="max-width: 40ch; opacity:.6;">
-        Una selección de premios, reconocimientos y referencias críticas obtenidos por el Centro Heydar Aliyev tras su inauguración.
-      </p>
-    </div>
-
-    <div class="press__list">
-      <div class="press__row rv">
-        <time>2014</time>
-        <span class="what">Design of the Year — primera arquitecta en ganar el premio</span>
-        <span class="who">Design Museum · Londres</span>
-        <span class="arrow">→</span>
-      </div>
-      <div class="press__row rv">
-        <time>2013</time>
-        <span class="what">Mejor edificio cultural del año</span>
-        <span class="who">World Architecture Festival</span>
-        <span class="arrow">→</span>
-      </div>
-      <div class="press__row rv">
-        <time>2013</time>
-        <span class="what">Edificio del año en la categoría &laquo;cultura&raquo;</span>
-        <span class="who">ArchDaily · Internacional</span>
-        <span class="arrow">→</span>
-      </div>
-      <div class="press__row rv">
-        <time>2014</time>
-        <span class="what">Portada · número especial sobre arquitectura azerí</span>
-        <span class="who">Domus · Italia</span>
-        <span class="arrow">→</span>
-      </div>
-      <div class="press__row rv">
-        <time>2015</time>
-        <span class="what">Inclusión en la lista de las 100 obras más importantes del siglo XXI</span>
-        <span class="who">Architectural Digest</span>
-        <span class="arrow">→</span>
-      </div>
-      <div class="press__row rv">
-        <time>2017</time>
-        <span class="what">Sello postal oficial conmemorativo de la República de Azerbaiyán</span>
-        <span class="who">Azərmarka</span>
-        <span class="arrow">→</span>
-      </div>
-      <div class="press__row rv">
-        <time>2019</time>
-        <span class="what">Documental dedicado en la serie &laquo;Buildings That Defy Gravity&raquo;</span>
-        <span class="who">National Geographic</span>
-        <span class="arrow">→</span>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ═══════════════ LOCATION ═══════════════ -->
 <section id="location" class="location">
   <div class="container container--wide">
-    <div class="eyebrow rv" style="margin-bottom: 3rem;">Ubicación · 11</div>
+    <div class="eyebrow rv" style="margin-bottom: 3rem;">Ubicación · 09</div>
     <div class="location__grid">
       <div class="location__info">
         <h2 class="rv">Bakú,<br><em>Azerbaiyán</em>.</h2>
         <p class="rv">
-          Bakú &mdash;la <em>"ciudad de los vientos"</em>&mdash; se extiende a orillas del Mar Caspio, en el extremo sur del Cáucaso. Capital y motor económico de Azerbaiyán, es una metrópoli de tres millones de habitantes que combina la arquitectura medieval amurallada de la Ciudad Vieja (Patrimonio de la Humanidad por la UNESCO) con una vanguardia arquitectónica sin precedentes en la región. El Centro Heydar Aliyev se erige en la avenida que lleva el mismo nombre, la gran arteria que atraviesa la metrópoli de norte a sur.
+          Capital azerbaiyana a orillas del Caspio, conocida como la <em>"ciudad de los vientos"</em>. El Centro se erige sobre la avenida que lleva el mismo nombre.
         </p>
         <div class="location__details">
           <div class="rv">
@@ -780,17 +568,9 @@
           </div>
           <div class="rv d2">
             <span>Distrito</span>
-            <strong>Narimanov · Bakú</strong>
+            <strong>Narimanov</strong>
           </div>
           <div class="rv d3">
-            <span>Metro</span>
-            <strong>Stn. Nariman Narimanov</strong>
-          </div>
-          <div class="rv d4">
-            <span>Aeropuerto</span>
-            <strong>Heydar Aliyev (GYD) · 22 km</strong>
-          </div>
-          <div class="rv d5">
             <span>Zona horaria</span>
             <strong>UTC +04:00</strong>
           </div>
@@ -822,19 +602,18 @@
       <div class="footer__col">
         <h4>Sobre este sitio</h4>
         <p>
-          Estudio editorial e interactivo del Centro Cultural Heydar Aliyev, diseñado por Zaha Hadid Architects en Bakú, Azerbaiyán. Proyecto educativo · sin ánimo de lucro.
+          Estudio interactivo del Centro Heydar Aliyev, complemento a la maqueta. Proyecto educativo.
         </p>
       </div>
       <div class="footer__col">
         <h4>Secciones</h4>
         <ul>
-          <li><a href="#identity">Identidad</a></li>
+          <li><a href="#identity">Ficha</a></li>
           <li><a href="#origin">Origen</a></li>
           <li><a href="#form">Forma</a></li>
           <li><a href="#viewer">Modelo 3D</a></li>
           <li><a href="#timeline">Cronología</a></li>
           <li><a href="#gallery">Galería</a></li>
-          <li><a href="#zaha">Zaha Hadid</a></li>
         </ul>
       </div>
       <div class="footer__col">
@@ -842,9 +621,7 @@
         <ul>
           <li><a href="https://heydaraliyevcenter.az" target="_blank" rel="noopener">Sitio oficial</a></li>
           <li><a href="https://www.zaha-hadid.com" target="_blank" rel="noopener">Zaha Hadid Architects</a></li>
-          <li><a href="https://es.wikipedia.org/wiki/Centro_Heydar_Aliyev" target="_blank" rel="noopener">Wikipedia · ES</a></li>
-          <li><a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a></li>
-          <li><a href="https://designmuseum.org" target="_blank" rel="noopener">Design Museum London</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/Category:Heydar_Aliyev_Cultural_Center" target="_blank" rel="noopener">Wikimedia Commons</a></li>
         </ul>
       </div>
       <div class="footer__col">
@@ -852,16 +629,16 @@
         <ul>
           <li>Imágenes · Wikimedia Commons</li>
           <li>Tipografía · Fraunces · Inter</li>
-          <li>3D · Three.js (r128)</li>
-          <li>Mapa · Google Maps</li>
+          <li>3D · Three.js · STL</li>
+          <li>Modelo · Printables 1296501</li>
         </ul>
       </div>
     </div>
 
     <div class="footer__bottom">
-      <span>© 2024 · Proyecto educativo</span>
-      <span>Diseñado &amp; programado a mano</span>
-      <span>v.1.0 · Bakú · Madrid · Mx</span>
+      <span>© Proyecto educativo</span>
+      <span>Diseñado a mano</span>
+      <span>v.2.0 · Bakú</span>
     </div>
   </div>
 </footer>

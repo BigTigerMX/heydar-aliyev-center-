@@ -347,6 +347,9 @@ function initHeroIntro() {
 
 /* =========================================================
    8. THREE.JS — INTERACTIVE BUILDING VIEWER
+   Loads STL from assets/models/heydar.stl (the Printables model
+   used for the physical maqueta). Falls back to a parametric
+   shell if the STL is missing.
    ========================================================= */
 (() => {
   const canvas = document.getElementById('viewerCanvas');
@@ -354,9 +357,11 @@ function initHeroIntro() {
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000);
   camera.position.set(7, 4, 11);
 
   // Lights
@@ -364,71 +369,144 @@ function initHeroIntro() {
   const sun = new THREE.DirectionalLight(0xfff5e8, 1.4);
   sun.position.set(8, 14, 6);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.left = -15;
+  sun.shadow.camera.right = 15;
+  sun.shadow.camera.top = 15;
+  sun.shadow.camera.bottom = -15;
   scene.add(sun);
   const rim = new THREE.DirectionalLight(0xb08d4a, .5);
   rim.position.set(-6, 4, -4);
   scene.add(rim);
+  const fill = new THREE.HemisphereLight(0xefeae0, 0x9a9388, .35);
+  scene.add(fill);
 
-  // Building geometry — flowing shell
-  const sX = 80, sY = 46;
-  const bGeo = new THREE.BufferGeometry();
-  const bPos = [];
-  const bIdx = [];
-
-  for (let j = 0; j <= sY; j++) {
-    for (let i = 0; i <= sX; i++) {
-      const u = i / sX, v = j / sY;
-      const ang = u * Math.PI;
-      const radiusY = 3 + Math.sin(v * Math.PI) * 1.7;
-      const radiusZ = 2.0 + Math.sin(v * Math.PI) * 1.0;
-      const x = (u - .5) * 11;
-      const y = v * 5 + Math.sin(u * Math.PI * 1.3) * .35 + Math.cos(v * Math.PI * 2) * .08;
-      const z = Math.sin(ang) * radiusZ * (.6 + .4 * Math.sin(v * Math.PI));
-      bPos.push(x, y, z);
-    }
-  }
-  for (let j = 0; j < sY; j++) {
-    for (let i = 0; i < sX; i++) {
-      const a = j * (sX + 1) + i;
-      const b = a + 1, c = a + (sX + 1), d = c + 1;
-      bIdx.push(a, b, d, a, d, c);
-    }
-  }
-  bGeo.setIndex(bIdx);
-  bGeo.setAttribute('position', new THREE.Float32BufferAttribute(bPos, 3));
-  bGeo.computeVertexNormals();
-
+  // Material — Heydar Aliyev fachada blanca
   const mat = new THREE.MeshPhongMaterial({
     color: 0xfafaf6,
     specular: 0xc4bcae,
-    shininess: 80,
+    shininess: 90,
     side: THREE.DoubleSide,
     flatShading: false,
   });
-  const mesh = new THREE.Mesh(bGeo, mat);
-  mesh.position.y = -2.5;
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  scene.add(mesh);
-
-  // Wireframe overlay (subtle)
-  const wf = new THREE.Mesh(bGeo, new THREE.MeshBasicMaterial({
-    color: 0x1f3a5f, wireframe: true, transparent: true, opacity: .08
-  }));
-  wf.position.y = -2.5;
-  scene.add(wf);
 
   // Ground
-  const groundGeo = new THREE.PlaneGeometry(40, 40);
-  const groundMat = new THREE.ShadowMaterial({ opacity: .2 });
+  const groundGeo = new THREE.PlaneGeometry(60, 60);
+  const groundMat = new THREE.ShadowMaterial({ opacity: .22 });
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.rotation.x = -Math.PI / 2;
   ground.position.y = -2.5;
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // Orbit
+  // Holder for whatever model gets loaded
+  const modelGroup = new THREE.Group();
+  modelGroup.position.y = -2.5;
+  scene.add(modelGroup);
+
+  // Loading UI
+  const loadingEl = document.getElementById('viewerLoading');
+  const statusEl  = document.getElementById('viewerLabelStatus');
+  const setStatus = txt => statusEl && (statusEl.textContent = txt);
+
+  // ---------- Fallback parametric shell (used if STL missing) ----------
+  function buildFallback() {
+    const sX = 90, sY = 50;
+    const geo = new THREE.BufferGeometry();
+    const pos = [];
+    const idx = [];
+    for (let j = 0; j <= sY; j++) {
+      for (let i = 0; i <= sX; i++) {
+        const u = i / sX, v = j / sY;
+        const ang = u * Math.PI;
+        const radiusZ = 2.4 + Math.sin(v * Math.PI) * 1.2;
+        const x = (u - .5) * 12;
+        const y = v * 5.2 +
+                  Math.sin(u * Math.PI * 1.3) * .45 +
+                  Math.cos(v * Math.PI * 2) * .12 +
+                  Math.exp(-Math.pow((u - .5) * 3, 2)) * .9;
+        const z = Math.sin(ang) * radiusZ * (.55 + .45 * Math.sin(v * Math.PI));
+        pos.push(x, y, z);
+      }
+    }
+    for (let j = 0; j < sY; j++) {
+      for (let i = 0; i < sX; i++) {
+        const a = j * (sX + 1) + i;
+        const b = a + 1, c = a + (sX + 1), d = c + 1;
+        idx.push(a, b, d, a, d, c);
+      }
+    }
+    geo.setIndex(idx);
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.computeVertexNormals();
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    modelGroup.add(mesh);
+
+    const wf = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+      color: 0x1f3a5f, wireframe: true, transparent: true, opacity: .07
+    }));
+    modelGroup.add(wf);
+
+    setStatus('Mesh · parametric (STL no encontrado)');
+  }
+
+  // ---------- STL loader (preferred) ----------
+  function fitAndCenter(geometry) {
+    geometry.computeBoundingBox();
+    const bb = geometry.boundingBox;
+    const size = new THREE.Vector3();
+    bb.getSize(size);
+    const center = new THREE.Vector3();
+    bb.getCenter(center);
+    geometry.translate(-center.x, -bb.min.y, -center.z);
+    const target = 9;
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scale = target / maxDim;
+    geometry.scale(scale, scale, scale);
+  }
+
+  function tryLoadSTL() {
+    if (!THREE.STLLoader) {
+      buildFallback();
+      loadingEl?.classList.add('is-done');
+      return;
+    }
+    const loader = new THREE.STLLoader();
+    loader.load(
+      'assets/models/heydar.stl',
+      geometry => {
+        fitAndCenter(geometry);
+        geometry.computeVertexNormals();
+        const mesh = new THREE.Mesh(geometry, mat);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        modelGroup.add(mesh);
+        const wf = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
+          color: 0x1f3a5f, wireframe: true, transparent: true, opacity: .06
+        }));
+        modelGroup.add(wf);
+        setStatus('STL · Printables 1296501');
+        loadingEl?.classList.add('is-done');
+      },
+      xhr => {
+        if (xhr.lengthComputable && loadingEl) {
+          const pct = (xhr.loaded / xhr.total * 100).toFixed(0);
+          loadingEl.querySelector('span').textContent = `Cargando · ${pct}%`;
+        }
+      },
+      err => {
+        console.warn('STL load failed, using fallback:', err);
+        buildFallback();
+        loadingEl?.classList.add('is-done');
+      }
+    );
+  }
+
+  tryLoadSTL();
+
+  // Orbit controls
   let theta = .55, phi = 1.05, radius = 13;
   let drag = false, prevX = 0, prevY = 0;
   let auto = true;
@@ -458,7 +536,7 @@ function initHeroIntro() {
   window.addEventListener('touchmove', e => { onMove(e); }, { passive: true });
 
   canvas.addEventListener('wheel', e => {
-    radius = Math.max(7, Math.min(22, radius + e.deltaY * .012));
+    radius = Math.max(6, Math.min(28, radius + e.deltaY * .012));
     e.preventDefault();
   }, { passive: false });
 
@@ -479,6 +557,93 @@ function initHeroIntro() {
     camera.position.z = radius * Math.sin(phi) * Math.cos(theta);
     camera.lookAt(0, 0, 0);
     renderer.render(scene, camera);
+  }
+  loop();
+})();
+
+/* =========================================================
+   11. AMBIENT DUST — site-wide drifting particles
+   ========================================================= */
+(() => {
+  const canvas = document.getElementById('ambientDust');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  function resize() {
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const COUNT = reduceMotion ? 0 : 70;
+  const dust = [];
+  for (let i = 0; i < COUNT; i++) {
+    dust.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 1.4 + .4,
+      vx: (Math.random() - .5) * .08,
+      vy: -(Math.random() * .12 + .03),
+      a: Math.random() * .35 + .12,
+      tw: Math.random() * Math.PI * 2,
+    });
+  }
+
+  let mx = w / 2, my = h / 2;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+
+  let t = 0;
+  function loop() {
+    requestAnimationFrame(loop);
+    if (!COUNT) return;
+    t += .01;
+    ctx.clearRect(0, 0, w, h);
+    for (const p of dust) {
+      // gentle attraction toward cursor
+      const dx = mx - p.x, dy = my - p.y;
+      const d2 = dx*dx + dy*dy;
+      if (d2 < 40000) {
+        p.vx += dx * .000004;
+        p.vy += dy * .000004;
+      }
+      p.x += p.vx;
+      p.y += p.vy;
+      p.tw += .02;
+      if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+      if (p.x < -10) p.x = w + 10;
+      if (p.x > w + 10) p.x = -10;
+
+      const a = p.a * (.7 + .3 * Math.sin(p.tw));
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(176, 141, 74, ${a.toFixed(3)})`;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  loop();
+})();
+
+/* =========================================================
+   12. AMBIENT CURVES — subtle response to scroll
+   ========================================================= */
+(() => {
+  const curves = document.querySelectorAll('.ambient__curve');
+  if (!curves.length) return;
+  let scrollY = 0, target = 0;
+  window.addEventListener('scroll', () => {
+    target = window.scrollY;
+  }, { passive: true });
+  function loop() {
+    requestAnimationFrame(loop);
+    scrollY += (target - scrollY) * .08;
+    const norm = scrollY * .0006;
+    curves.forEach((c, i) => {
+      c.style.transform = `translate3d(${(i % 2 === 0 ? -1 : 1) * norm * 30}px, ${norm * (10 + i * 4)}px, 0)`;
+    });
   }
   loop();
 })();
