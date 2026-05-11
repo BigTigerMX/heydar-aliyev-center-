@@ -284,63 +284,72 @@ function initHeroIntro() {
   }
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xefeae0, 30, 95);
-  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 1000);
+  scene.fog = new THREE.Fog(0xf2ede2, 38, 110);
+  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 1000);
 
-  // Three-point light setup
-  scene.add(new THREE.AmbientLight(0xffffff, .35));
-  const sun = new THREE.DirectionalLight(0xfff4e1, 1.7);
-  sun.position.set(8, 16, 7);
-  sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
-  sun.shadow.camera.left = -18;
-  sun.shadow.camera.right = 18;
-  sun.shadow.camera.top = 18;
-  sun.shadow.camera.bottom = -18;
-  sun.shadow.bias = -0.0003;
-  scene.add(sun);
-  const rim = new THREE.DirectionalLight(0xc6a368, .8);
-  rim.position.set(-8, 5, -6);
-  scene.add(rim);
-  const fill = new THREE.HemisphereLight(0xeef0f5, 0x9a9388, .6);
+  // ── Studio-style 3-point lighting for clean white architectural model ──
+  scene.add(new THREE.AmbientLight(0xffffff, .55));
+
+  const key = new THREE.DirectionalLight(0xffffff, 2.1);
+  key.position.set(7, 14, 9);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.left = -14;
+  key.shadow.camera.right = 14;
+  key.shadow.camera.top = 14;
+  key.shadow.camera.bottom = -14;
+  key.shadow.camera.near = 0.5;
+  key.shadow.camera.far = 60;
+  key.shadow.bias = -0.0002;
+  key.shadow.radius = 4;
+  scene.add(key);
+
+  const fill = new THREE.DirectionalLight(0xeaf1ff, .7);
+  fill.position.set(-9, 5, 4);
   scene.add(fill);
-  const accent = new THREE.PointLight(0x7eb5ff, .4, 50);
-  accent.position.set(-3, 4, 8);
-  scene.add(accent);
 
+  const rim = new THREE.DirectionalLight(0xfff1d4, .85);
+  rim.position.set(-3, 9, -10);
+  scene.add(rim);
+
+  const sky = new THREE.HemisphereLight(0xf6f1e6, 0xc4bda9, .55);
+  scene.add(sky);
+
+  const goldAccent = new THREE.PointLight(0xc6a368, .55, 40, 2);
+  goldAccent.position.set(6, 3, -5);
+  scene.add(goldAccent);
+
+  // ── Material: clean architectural white, soft sheen ──
   const useStdMat = !THREE.MeshPhysicalMaterial;
   const mat = useStdMat
-    ? new THREE.MeshStandardMaterial({ color: 0xf6f3ec, roughness: .55, metalness: .04, side: THREE.DoubleSide })
+    ? new THREE.MeshStandardMaterial({ color: 0xfafaf6, roughness: .42, metalness: .02, side: THREE.DoubleSide })
     : new THREE.MeshPhysicalMaterial({
-        color: 0xf6f3ec, roughness: .55, metalness: .04,
-        clearcoat: .25, clearcoatRoughness: .6,
+        color: 0xfafaf6, roughness: .42, metalness: .02,
+        clearcoat: .35, clearcoatRoughness: .55,
+        sheen: .15, sheenRoughness: .6,
         side: THREE.DoubleSide,
       });
 
-  // Plinth
+  // ── Plinth (subtle stone disc) ──
   const plinth = new THREE.Mesh(
-    new THREE.CircleGeometry(18, 64),
-    new THREE.MeshStandardMaterial({ color: 0xddd6c7, roughness: .85, metalness: 0 })
+    new THREE.CircleGeometry(18, 96),
+    new THREE.MeshStandardMaterial({ color: 0xe6dfd0, roughness: .92, metalness: 0 })
   );
   plinth.rotation.x = -Math.PI / 2;
   plinth.position.y = -2.5;
   plinth.receiveShadow = true;
   scene.add(plinth);
 
-  // Concentric decorative rings
+  // ── Single subtle reference ring (instead of 4 noisy ones) ──
   const ringGroup = new THREE.Group();
-  for (let i = 1; i <= 4; i++) {
-    const r = 4 + i * 2.6;
-    const g = new THREE.RingGeometry(r - 0.02, r, 96);
-    const m = new THREE.MeshBasicMaterial({
-      color: 0xb08d4a, transparent: true,
-      opacity: 0.07 + 0.03 * (4 - i), side: THREE.DoubleSide,
-    });
-    const ring = new THREE.Mesh(g, m);
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = -2.49;
-    ringGroup.add(ring);
-  }
+  const refRingGeo = new THREE.RingGeometry(11.9, 12, 128);
+  const refRingMat = new THREE.MeshBasicMaterial({
+    color: 0xb08d4a, transparent: true, opacity: .18, side: THREE.DoubleSide,
+  });
+  const refRing = new THREE.Mesh(refRingGeo, refRingMat);
+  refRing.rotation.x = -Math.PI / 2;
+  refRing.position.y = -2.49;
+  ringGroup.add(refRing);
   scene.add(ringGroup);
 
   const modelGroup = new THREE.Group();
@@ -354,11 +363,19 @@ function initHeroIntro() {
 
   function fitAndCenter(geometry) {
     geometry.computeBoundingBox();
-    const bb = geometry.boundingBox;
-    const size = new THREE.Vector3();   bb.getSize(size);
+    let bb = geometry.boundingBox;
+    let size = new THREE.Vector3(); bb.getSize(size);
+    // Auto-detect Z-up STL: the building is wider than tall, so the "vertical" axis
+    // should be the SMALLEST of the three. If Z is smaller than Y, the file is Z-up.
+    if (size.z < size.y) {
+      geometry.rotateX(-Math.PI / 2);
+      geometry.computeBoundingBox();
+      bb = geometry.boundingBox;
+      size = new THREE.Vector3(); bb.getSize(size);
+    }
     const center = new THREE.Vector3(); bb.getCenter(center);
     geometry.translate(-center.x, -bb.min.y, -center.z);
-    const target = 11;
+    const target = 12;
     const maxDim = Math.max(size.x, size.z);
     const scale = target / maxDim;
     geometry.scale(scale, scale, scale);
@@ -416,10 +433,11 @@ function initHeroIntro() {
         const mesh = new THREE.Mesh(geometry, mat);
         mesh.castShadow = true; mesh.receiveShadow = true;
         modelGroup.add(mesh);
-        // Subtle wireframe parametric reading
+        // Whisper-thin wireframe reading (paramétrico de Hadid)
         const wf = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
-          color: 0x1f3a5f, wireframe: true, transparent: true, opacity: .035
+          color: 0x1f3a5f, wireframe: true, transparent: true, opacity: .022
         }));
+        wf.scale.setScalar(1.0008);
         modelGroup.add(wf);
         setStatus('STL · Printables 1296501');
         loadingEl?.classList.add('is-done');
@@ -440,18 +458,18 @@ function initHeroIntro() {
   }
   tryLoadSTL();
 
-  // Camera state
+  // Camera state — slightly closer and lower for more presence
   const state = {
-    theta: .9, phi: 1.05, radius: 16,
-    targetTheta: .9, targetPhi: 1.05, targetRadius: 16,
+    theta: .85, phi: 1.12, radius: 17,
+    targetTheta: .85, targetPhi: 1.12, targetRadius: 17,
     auto: true,
   };
   const VIEWS = {
-    iso:   { theta: .9,             phi: 1.05, radius: 16 },
-    front: { theta: 0,              phi: 1.25, radius: 17 },
-    side:  { theta: Math.PI / 2,    phi: 1.25, radius: 17 },
-    top:   { theta: 0,              phi: 0.05, radius: 18 },
-    reset: { theta: .9,             phi: 1.05, radius: 16 },
+    iso:   { theta: .85,            phi: 1.12, radius: 17 },
+    front: { theta: 0,              phi: 1.32, radius: 18 },
+    side:  { theta: Math.PI / 2,    phi: 1.32, radius: 18 },
+    top:   { theta: .15,            phi: 0.18, radius: 19 },
+    reset: { theta: .85,            phi: 1.12, radius: 17 },
   };
 
   function setView(name) {
@@ -526,9 +544,9 @@ function initHeroIntro() {
     state.radius += (state.targetRadius - state.radius) * .08;
 
     camera.position.x = state.radius * Math.sin(state.phi) * Math.sin(state.theta);
-    camera.position.y = state.radius * Math.cos(state.phi) * .9 + .5;
+    camera.position.y = state.radius * Math.cos(state.phi) * .85 + 1.1;
     camera.position.z = state.radius * Math.sin(state.phi) * Math.cos(state.theta);
-    camera.lookAt(0, 0, 0);
+    camera.lookAt(0, .9, 0);
 
     ringGroup.rotation.y += .0008;
     renderer.render(scene, camera);
