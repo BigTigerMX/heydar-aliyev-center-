@@ -23,26 +23,12 @@
 </head>
 <body>
 
-<!-- ═══════════════ AMBIENT BACKGROUNDS (site-wide animated layers) ═══════════════ -->
+<!-- ═══════════════ AMBIENT BACKGROUNDS (topographic + dust + grain) ═══════════════ -->
 <div class="ambient" aria-hidden="true">
+  <canvas class="ambient__topo" id="ambientTopo"></canvas>
   <canvas class="ambient__dust" id="ambientDust"></canvas>
-  <svg class="ambient__curves" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="grad-gold" x1="0" x2="1" y1="0" y2="1">
-        <stop offset="0%"  stop-color="#B08D4A" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#D6B575" stop-opacity=".55"/>
-        <stop offset="100%" stop-color="#B08D4A" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="grad-caspian" x1="0" x2="1" y1="0" y2="0">
-        <stop offset="0%"  stop-color="#1F3A5F" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#1F3A5F" stop-opacity=".35"/>
-        <stop offset="100%" stop-color="#1F3A5F" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <path class="ambient__curve c1" d="M-100 380 C 300 200, 600 560, 900 320 S 1500 480, 1800 280" stroke="url(#grad-gold)" fill="none" stroke-width="1"/>
-    <path class="ambient__curve c2" d="M-100 540 C 350 440, 700 700, 1000 480 S 1600 600, 1800 460" stroke="url(#grad-caspian)" fill="none" stroke-width="1"/>
-    <path class="ambient__curve c3" d="M-100 720 C 280 620, 720 860, 1100 660 S 1500 760, 1800 640" stroke="url(#grad-gold)" fill="none" stroke-width=".7"/>
-  </svg>
+  <div class="ambient__blob ambient__blob--gold"></div>
+  <div class="ambient__blob ambient__blob--caspian"></div>
   <div class="ambient__grain"></div>
 </div>
 
@@ -72,12 +58,12 @@
 <nav class="nav" id="nav">
   <a href="#hero" class="nav__brand">Heydar <strong>Aliyev</strong> Center</a>
   <ul class="nav__list">
+    <li><a href="#viewer">Modelo 3D</a></li>
     <li><a href="#identity">Ficha</a></li>
     <li><a href="#origin">Origen</a></li>
     <li><a href="#form">Forma</a></li>
-    <li><a href="#viewer">Modelo 3D</a></li>
     <li><a href="#timeline">Cronología</a></li>
-    <li><a href="#gallery">Galería</a></li>
+    <li><a href="#inside">Espacios</a></li>
     <li><a href="#zaha">Zaha</a></li>
   </ul>
   <span class="nav__locale">ES · 40°25′N</span>
@@ -85,10 +71,11 @@
     <span></span><span></span>
   </button>
   <div class="nav__menu">
+    <a href="#viewer">Modelo 3D</a>
     <a href="#identity">Ficha</a>
     <a href="#origin">Origen</a>
     <a href="#form">Forma</a>
-    <a href="#viewer">Modelo 3D</a>
+    <a href="#materials">Materiales</a>
     <a href="#timeline">Cronología</a>
     <a href="#gallery">Galería</a>
     <a href="#zaha">Zaha Hadid</a>
@@ -136,6 +123,62 @@
   </div>
 </section>
 
+<!-- ═══════════════ 3D INTERACTIVE VIEWER (main attraction) ═══════════════ -->
+<section id="viewer" class="viewer viewer--feature">
+  <div class="container container--wide">
+    <div class="eyebrow rv" style="margin-bottom: 2rem;">Modelo 3D · 01</div>
+    <div class="viewer__head">
+      <h2 class="rv">
+        El mismo modelo<br>de la <em>maqueta</em>.
+      </h2>
+      <p class="viewer__intro rv d1 muted">
+        Reproducción tridimensional al detalle, gemela del modelo impreso para la maqueta. Arrastra · rueda · pellizca.
+      </p>
+    </div>
+
+    <div class="viewer__stage viewer__stage--feature rv" data-cursor="link">
+      <canvas class="viewer__canvas" id="viewerCanvas"></canvas>
+      <div class="viewer__hud">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        <div class="label-tl" id="viewerLabelStatus">Mesh · loading</div>
+        <div class="label-tr">Lat 40°25′ · Lon 49°51′</div>
+        <div class="label-bl">Escala referencial</div>
+        <div class="label-br" id="viewerLabelFps">WebGL · STL</div>
+      </div>
+
+      <!-- corner data callouts -->
+      <div class="viewer__readout">
+        <div><span>Auditorio</span><strong>1000 plazas</strong></div>
+        <div><span>Galería</span><strong>3 plantas</strong></div>
+        <div><span>Altura</span><strong>74 m</strong></div>
+      </div>
+
+      <!-- view-control buttons -->
+      <div class="viewer__controls">
+        <button data-view="front" class="viewer__btn">Frente</button>
+        <button data-view="side"  class="viewer__btn">Lateral</button>
+        <button data-view="top"   class="viewer__btn">Cenital</button>
+        <button data-view="iso"   class="viewer__btn is-active">Iso</button>
+        <button data-view="reset" class="viewer__btn viewer__btn--alt">↻</button>
+      </div>
+
+      <div class="viewer__loading" id="viewerLoading">
+        <div class="viewer__loading-bar"></div>
+        <span>Cargando modelo · STL</span>
+      </div>
+    </div>
+
+    <div class="viewer__hint">
+      <span>← Arrastra para rotar</span>
+      <span>Rueda · pellizcar para zoom</span>
+      <span>Click en una vista para encuadrar</span>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════════ MANIFESTO ═══════════════ -->
 <section class="manifesto">
   <div class="container">
@@ -154,7 +197,7 @@
     <div class="identity__grid">
       <div class="identity__head">
         <div>
-          <div class="eyebrow rv">Ficha · 01</div>
+          <div class="eyebrow rv">Ficha · 02</div>
           <h2 class="identity__title rv d1">
             La <em>identidad</em><br>del edificio.
           </h2>
@@ -166,34 +209,39 @@
 
       <div class="identity__rows">
         <div class="identity__row rv">
-          <div class="label">Ubicación</div>
-          <div class="value">Av. Heydar Aliyev · Bakú</div>
-          <div class="index">/01</div>
-        </div>
-        <div class="identity__row rv d1">
           <div class="label">Arquitecta</div>
           <div class="value">Dame <em>Zaha Hadid</em></div>
-          <div class="index">/02</div>
+          <div class="index">/01</div>
         </div>
         <div class="identity__row rv d1">
           <div class="label">Estudio</div>
           <div class="value">Zaha Hadid Architects</div>
-          <div class="index">/03</div>
+          <div class="index">/02</div>
         </div>
-        <div class="identity__row rv d2">
+        <div class="identity__row rv d1">
           <div class="label">Concurso</div>
           <div class="value">Internacional · <em>2007</em></div>
-          <div class="index">/04</div>
+          <div class="index">/03</div>
         </div>
         <div class="identity__row rv d2">
           <div class="label">Inauguración</div>
           <div class="value">10 de mayo de <em>2012</em></div>
+          <div class="index">/04</div>
+        </div>
+        <div class="identity__row rv d2">
+          <div class="label">Tipología</div>
+          <div class="value">Auditorio · Museo · Conferencias</div>
           <div class="index">/05</div>
         </div>
         <div class="identity__row rv d3">
-          <div class="label">Tipología</div>
-          <div class="value">Auditorio · Museo · Conferencias</div>
+          <div class="label">Coordenadas</div>
+          <div class="value">40°25′26″N · 49°51′21″E</div>
           <div class="index">/06</div>
+        </div>
+        <div class="identity__row rv d3">
+          <div class="label">Coste estimado</div>
+          <div class="value">≈ <em>250 M</em> USD</div>
+          <div class="index">/07</div>
         </div>
       </div>
     </div>
@@ -203,18 +251,25 @@
 <!-- ═══════════════ ORIGIN ═══════════════ -->
 <section id="origin" class="origin">
   <div class="container">
-    <div class="eyebrow rv" style="margin-bottom: 3rem;">Origen · 02</div>
+    <div class="eyebrow rv" style="margin-bottom: 3rem;">Origen · 03</div>
     <div class="origin__grid">
       <h2 class="origin__title rv">
         Un edificio que<br>cerró la era<br><em>soviética</em>.
       </h2>
       <div class="origin__body">
         <p class="rv">
-          En 2003, tras la muerte del tercer Presidente azerbaiyano, el gobierno convoca un concurso internacional para erigir un símbolo cultural en su honor. En 2007, <strong>Zaha Hadid Architects</strong> gana con una propuesta sin ángulos rectos: una superficie continua que emerge del suelo, se pliega en el aire y vuelve a la tierra.
+          En 2007, <strong>Zaha Hadid Architects</strong> gana el concurso internacional convocado en honor al tercer Presidente azerbaiyano. Su propuesta no tiene un solo ángulo recto: una superficie continua que emerge del suelo, se pliega en el aire y vuelve a la tierra.
         </p>
         <p class="rv d1">
-          La construcción comienza en 2008. Más de <strong>7.500 paneles únicos</strong> de hormigón y poliéster reforzados con fibra de vidrio se fabrican uno a uno —ninguno se repite— y se inaugura el <strong>10 de mayo de 2012</strong>. En 2014, el Design Museum de Londres lo nombra <em>"Diseño del Año"</em>: la primera vez que el premio recae en una arquitecta.
+          Más de <strong>7.500 paneles únicos</strong> en GRC y GFRP forman su piel —ninguno se repite—. Se inaugura el <strong>10 de mayo de 2012</strong>, día del cumpleaños de Aliyev. En 2014 el Design Museum de Londres lo declara <em>"Diseño del Año"</em>: la primera vez que el premio recae en una arquitecta.
         </p>
+
+        <ul class="origin__facts rv d2">
+          <li><span>Concurso</span><strong>2007</strong></li>
+          <li><span>Construcción</span><strong>2008–2012</strong></li>
+          <li><span>Paneles únicos</span><strong>+7.500</strong></li>
+          <li><span>Visitantes año 1</span><strong>≈ 1 M</strong></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -223,7 +278,7 @@
 <!-- ═══════════════ FORM (concept) ═══════════════ -->
 <section id="form" class="form-section">
   <div class="container">
-    <div class="eyebrow rv" style="margin-bottom: 3rem;">Forma &amp; Concepto · 03</div>
+    <div class="eyebrow rv" style="margin-bottom: 3rem;">Forma &amp; Concepto · 04</div>
 
     <div class="form-section__row">
       <div class="form-section__visual img-reveal" data-num="01 · Topografía">
@@ -233,6 +288,9 @@
         <h3 class="rv">El edificio <em>es</em> el suelo.</h3>
         <p class="rv d1">
           La plaza pública asciende, se pliega como una ola y vuelve a descender. Suelo, muro y techo dejan de ser categorías separadas: son una sola superficie.
+        </p>
+        <p class="rv d2 muted">
+          Hadid llamó a esta operación <em>"liquefacción del suelo"</em>: la disolución de los límites entre lo público exterior y lo institucional interior.
         </p>
       </div>
     </div>
@@ -246,6 +304,9 @@
         <p class="rv d1">
           No existe un solo ángulo de 90° en la fachada. Cada panel curva ligeramente hacia el siguiente. Una piel blanca que de día captura la luz y de noche se ilumina desde dentro.
         </p>
+        <p class="rv d2 muted">
+          La estructura subyacente es un esqueleto de acero diseñado mediante software paramétrico que calcula nodo a nodo cada panel.
+        </p>
       </div>
     </div>
 
@@ -257,6 +318,9 @@
         <h3 class="rv">Plaza que se vuelve <em>arquitectura</em>.</h3>
         <p class="rv d1">
           13,58 hectáreas de jardines y senderos. La transición entre exterior e interior es deliberadamente borrosa: el visitante camina por la plaza y, sin advertirlo, ya está dentro.
+        </p>
+        <p class="rv d2 muted">
+          Una operación recurrente en Zaha Hadid: la arquitectura como paisaje continuo, presente también en el MAXXI de Roma o la Estación de Bomberos de Vitra.
         </p>
       </div>
     </div>
@@ -291,41 +355,44 @@
   </div>
 </section>
 
-<!-- ═══════════════ 3D INTERACTIVE VIEWER ═══════════════ -->
-<section id="viewer" class="viewer">
-  <div class="container container--wide">
-    <div class="eyebrow rv" style="margin-bottom: 2rem;">Modelo 3D · 04</div>
-    <div class="viewer__head">
-      <h2 class="rv">
-        El mismo modelo<br>de la <em>maqueta</em>.
-      </h2>
-      <p class="viewer__intro rv d1 muted">
-        Modelo a escala 1:1000, idéntico al impreso para la maqueta física. Arrastra para rotar, rueda del ratón para acercar.
+<!-- ═══════════════ MATERIALS / ENGINEERING ═══════════════ -->
+<section id="materials" class="materials">
+  <div class="container">
+    <div class="materials__head">
+      <div class="eyebrow rv" style="margin-bottom: 2rem;">Materiales &amp; ingeniería · 05</div>
+      <h2 class="rv">Cómo se <em>construyó</em> lo imposible.</h2>
+      <p class="rv d1">
+        Tres ingredientes hicieron posible la geometría: una estructura espacial de acero, una piel de paneles únicos y un flujo de trabajo paramétrico para coordinar miles de piezas.
       </p>
     </div>
 
-    <div class="viewer__stage rv">
-      <canvas class="viewer__canvas" id="viewerCanvas" data-cursor="link"></canvas>
-      <div class="viewer__hud">
-        <div class="corner tl"></div>
-        <div class="corner tr"></div>
-        <div class="corner bl"></div>
-        <div class="corner br"></div>
-        <div class="label-tl" id="viewerLabelStatus">Mesh · loading</div>
-        <div class="label-tr">v.2.0</div>
-        <div class="label-bl">Escala 1 : 1000</div>
-        <div class="label-br">WebGL · STL</div>
-      </div>
-      <div class="viewer__loading" id="viewerLoading">
-        <div class="viewer__loading-bar"></div>
-        <span>Cargando modelo · STL</span>
-      </div>
-    </div>
+    <div class="materials__grid">
+      <article class="matr rv">
+        <div class="matr__num">/01</div>
+        <h3 class="matr__title">Estructura de <em>acero</em></h3>
+        <p class="matr__desc">
+          Esqueleto espacial de acero soldado, calculado por elementos finitos. Asume todas las cargas del envolvente curvo y permite voladizos extremos sin pilares visibles.
+        </p>
+        <div class="matr__data">≈ 12.000 t · acero estructural</div>
+      </article>
 
-    <div class="viewer__hint">
-      <span>← Arrastra para rotar</span>
-      <span>Rueda · pellizcar para zoom</span>
-      <span>Auto-orbita activa</span>
+      <article class="matr rv d1">
+        <div class="matr__num">/02</div>
+        <h3 class="matr__title">Paneles <em>GRC</em> &amp; <em>GFRP</em></h3>
+        <p class="matr__desc">
+          Hormigón reforzado con fibra de vidrio (GRC) en las piezas más pesadas; poliéster reforzado (GFRP) en las de doble curvatura extrema. Cada panel se moldeó por separado.
+        </p>
+        <div class="matr__data">7.500+ paneles · ninguno repetido</div>
+      </article>
+
+      <article class="matr rv d2">
+        <div class="matr__num">/03</div>
+        <h3 class="matr__title">Diseño <em>paramétrico</em></h3>
+        <p class="matr__desc">
+          Geometría desarrollada en Rhino + Grasshopper + BIM. Cada panel y nodo se calculó individualmente y se exportó directamente a fabricación CNC.
+        </p>
+        <div class="matr__data">Rhino · Grasshopper · BIM</div>
+      </article>
     </div>
   </div>
 </section>
@@ -333,7 +400,7 @@
 <!-- ═══════════════ TIMELINE ═══════════════ -->
 <section id="timeline" class="timeline">
   <div class="container container--wide">
-    <div class="eyebrow rv" style="margin-bottom: 2rem; color: var(--gold-light); opacity:1;">Cronología · 05</div>
+    <div class="eyebrow rv" style="margin-bottom: 2rem; color: var(--gold-light); opacity:1;">Cronología · 06</div>
     <div class="timeline__head">
       <h2 class="rv">
         De la <em>idea</em><br>al edificio<br>en cinco años.
@@ -346,10 +413,11 @@
         <div class="tl-item__body">
           <div>
             <h3>Origen del proyecto</h3>
-            <p>Tras la muerte de Heydar Aliyev, el gobierno reserva 13,58 ha en el distrito Narimanov de Bakú.</p>
+            <p>Tras la muerte de Heydar Aliyev, tercer Presidente azerbaiyano, el gobierno decide construir un centro cultural en su honor y reserva 13,58 ha en el distrito Narimanov de Bakú.</p>
           </div>
           <div class="tl-item__meta">
             <div><span>Sitio</span>Narimanov · Bakú</div>
+            <div><span>Decisión</span>Gobierno de Azerbaiyán</div>
           </div>
         </div>
       </div>
@@ -359,9 +427,10 @@
         <div class="tl-item__body">
           <div>
             <h3>Concurso internacional</h3>
-            <p>Zaha Hadid Architects gana por unanimidad con una superficie continua sin ángulos rectos.</p>
+            <p>Concurso abierto entre estudios globales. Zaha Hadid Architects gana por unanimidad con una superficie continua sin ángulos rectos —una topografía construida.</p>
           </div>
           <div class="tl-item__meta">
+            <div><span>Tipo</span>Concurso internacional</div>
             <div><span>Ganador</span>Zaha Hadid Architects</div>
           </div>
         </div>
@@ -372,9 +441,10 @@
         <div class="tl-item__body">
           <div>
             <h3>Construcción</h3>
-            <p>DIA Holding y Arabtec materializan geometrías paramétricas en estructura física real.</p>
+            <p>Inicio de excavaciones y cimentación. DIA Holding (Turquía) y Arabtec (Emiratos) asumen el reto de materializar geometrías paramétricas en estructura física real.</p>
           </div>
           <div class="tl-item__meta">
+            <div><span>Constructoras</span>DIA Holding · Arabtec</div>
             <div><span>Estructura</span>Acero + GRC + GFRP</div>
           </div>
         </div>
@@ -385,10 +455,11 @@
         <div class="tl-item__body">
           <div>
             <h3>La piel del edificio</h3>
-            <p>Más de 7.500 paneles únicos, fabricados pieza por pieza. Ninguno se repite.</p>
+            <p>Empresas europeas especializadas fabrican más de 7.500 paneles únicos en GRC y GFRP. Cada uno con dimensiones, curvatura y peso distintos: ninguno se repite.</p>
           </div>
           <div class="tl-item__meta">
             <div><span>Paneles</span>7.500+ únicos</div>
+            <div><span>Software</span>BIM paramétrico</div>
           </div>
         </div>
       </div>
@@ -398,9 +469,10 @@
         <div class="tl-item__body">
           <div>
             <h3>Inauguración · 10 de mayo</h3>
-            <p>Más de un millón de visitantes en el primer año. Fecha elegida: cumpleaños de Heydar Aliyev.</p>
+            <p>El Presidente Ilham Aliyev preside la ceremonia con Zaha Hadid presente. Fecha elegida: cumpleaños de Heydar Aliyev. Más de un millón de visitantes en su primer año.</p>
           </div>
           <div class="tl-item__meta">
+            <div><span>Fecha</span>10 · 05 · 2012</div>
             <div><span>Año uno</span>1.000.000+ visitas</div>
           </div>
         </div>
@@ -411,10 +483,11 @@
         <div class="tl-item__body">
           <div>
             <h3>Diseño del Año</h3>
-            <p>El Design Museum de Londres lo premia. Primera vez que el galardón recae en una arquitecta.</p>
+            <p>El Design Museum de Londres otorga el galardón <em>Design of the Year</em>. Primera vez en la historia que el premio recae en una arquitecta. Hadid pasa al panteón global.</p>
           </div>
           <div class="tl-item__meta">
             <div><span>Premio</span>Design of the Year</div>
+            <div><span>Otorgado por</span>Design Museum · Londres</div>
           </div>
         </div>
       </div>
@@ -426,37 +499,37 @@
 <section id="inside" class="inside">
   <div class="container container--wide">
     <div class="inside__head">
-      <div class="eyebrow rv" style="margin-bottom: 2rem;">Espacios · 06</div>
+      <div class="eyebrow rv" style="margin-bottom: 2rem;">Espacios · 07</div>
       <h2 class="rv">Lo que vive <em>dentro</em>.</h2>
     </div>
 
     <div class="inside__grid">
-      <a class="room r1" data-lightbox data-cap="Auditorio principal">
-        <img src="assets/img/inside-01.jpg" alt="Auditorio del Centro Heydar Aliyev">
+      <a class="room r1" data-lightbox data-cap="Auditorio principal · 1000 plazas">
+        <img src="assets/img/inside-01.jpg" alt="Auditorio principal del Centro Heydar Aliyev">
         <div class="room__caption">
           <h4>Auditorio</h4>
-          <span>1.000 plazas</span>
+          <span>1.000 plazas · Madera curva</span>
         </div>
       </a>
-      <a class="room r2" data-lightbox data-cap="Galerías del museo">
-        <img src="assets/img/inside-02.jpg" alt="Galería interior">
+      <a class="room r2" data-lightbox data-cap="Atrio principal · escalera continua">
+        <img src="assets/img/inside-04.jpg" alt="Atrio principal con escalera">
         <div class="room__caption">
-          <h4>Galerías</h4>
-          <span>3 plantas</span>
+          <h4>Atrio</h4>
+          <span>Escalera continua</span>
         </div>
       </a>
-      <a class="room r3" data-lightbox data-cap="Espacio multiuso">
-        <img src="assets/img/inside-03.jpg" alt="Espacio interior multiuso">
+      <a class="room r3" data-lightbox data-cap="Vestíbulo · doble altura">
+        <img src="assets/img/inside-02.jpg" alt="Vestíbulo con vegetación interior">
+        <div class="room__caption">
+          <h4>Vestíbulo</h4>
+          <span>Doble altura</span>
+        </div>
+      </a>
+      <a class="room r4" data-lightbox data-cap="Multiuso · pasaje iluminado">
+        <img src="assets/img/inside-03.jpg" alt="Pasaje multiuso con iluminación lineal">
         <div class="room__caption">
           <h4>Multiuso</h4>
-          <span>Eventos</span>
-        </div>
-      </a>
-      <a class="room r4" data-lightbox data-cap="Plaza pública">
-        <img src="assets/img/inside-04.jpg" alt="Plaza del Centro Heydar Aliyev en su contexto">
-        <div class="room__caption">
-          <h4>Plaza</h4>
-          <span>13,58 ha</span>
+          <span>Pasaje iluminado</span>
         </div>
       </a>
     </div>
@@ -468,7 +541,7 @@
   <div class="container container--wide">
     <div class="gallery__head">
       <div>
-        <div class="eyebrow rv" style="margin-bottom: 2rem;">Galería · 07</div>
+        <div class="eyebrow rv" style="margin-bottom: 2rem;">Galería · 08</div>
         <h2 class="rv"><em>Cuatro</em> miradas.</h2>
       </div>
       <span class="gallery__count rv d1">004 / 004 · clic para ampliar</span>
@@ -498,7 +571,7 @@
 <!-- ═══════════════ ZAHA HADID ═══════════════ -->
 <section id="zaha" class="zaha">
   <div class="container">
-    <div class="eyebrow rv" style="margin-bottom: 3rem;">Su Creadora · 08</div>
+    <div class="eyebrow rv" style="margin-bottom: 3rem;">Su Creadora · 09</div>
 
     <div class="zaha__hero">
       <div class="zaha__portrait img-reveal rv">
@@ -527,17 +600,19 @@
 
       <main>
         <p class="rv">
-          Iraquí, formada en <strong>matemáticas</strong> antes que en arquitectura, Hadid fundó su estudio en Londres en 1980. Sus primeros quince años se calificaron de <em>"imposibles de construir"</em>: el software paramétrico tardaría en alcanzarla.
+          Nacida en Bagdad en 1950, estudió <strong>matemáticas</strong> en la Universidad Americana de Beirut antes de trasladarse en 1972 a la <strong>Architectural Association</strong> de Londres. Esa formación dotó a su arquitectura de una precisión geométrica extraordinaria.
         </p>
         <p class="rv">
-          En <strong>2004</strong>, primera mujer en recibir el <strong>Pritzker</strong> —máximo galardón de la arquitectura mundial—. Murió en Miami en 2016, a los 65 años, tras dejar 44 edificios construidos y un lenguaje propio: el <em>parametrismo</em>.
+          Durante los quince años posteriores a la fundación de su estudio en 1980, sus proyectos fueron tachados de <em>"imposibles de construir"</em>: solo el software paramétrico permitiría materializarlos. En <strong>2004</strong> se convirtió en la primera mujer en recibir el <strong>Premio Pritzker</strong>. Falleció en Miami en 2016, dejando un lenguaje propio: el <em>parametrismo</em>.
         </p>
 
         <div class="zaha__awards">
           <h3>Reconocimientos clave</h3>
           <ul class="zaha__awards-list">
             <li><time>2004</time><span class="name">Premio Pritzker · primera mujer</span></li>
+            <li><time>2010</time><span class="name">Premio Stirling · MAXXI · Roma</span></li>
             <li><time>2012</time><span class="name">Dame Commander del Imperio Británico</span></li>
+            <li><time>2013</time><span class="name">Premio Stirling · Aquatics Centre · Londres</span></li>
             <li><time>2014</time><span class="name">Design of the Year · Heydar Aliyev</span></li>
             <li><time>2016</time><span class="name">Royal Gold Medal · RIBA</span></li>
           </ul>
@@ -550,7 +625,7 @@
 <!-- ═══════════════ LOCATION ═══════════════ -->
 <section id="location" class="location">
   <div class="container container--wide">
-    <div class="eyebrow rv" style="margin-bottom: 3rem;">Ubicación · 09</div>
+    <div class="eyebrow rv" style="margin-bottom: 3rem;">Ubicación · 10</div>
     <div class="location__grid">
       <div class="location__info">
         <h2 class="rv">Bakú,<br><em>Azerbaiyán</em>.</h2>
